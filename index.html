@@ -4,81 +4,357 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حساب کتاب ورژن 1.1</title>
-    <!-- Tailwind CSS for modern UI -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Sans+Urdu:wght@400;700&display=swap');
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Urdu:wght@400;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             font-family: 'Noto Sans Urdu', sans-serif;
         }
-        .nastaliq {
-            font-family: 'Noto Nastaliq Urdu', serif;
+
+        body {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding-bottom: 60px;
+            transition: background-color 0.3s, color 0.3s;
         }
-        .dark-theme {
+
+        body.dark-theme {
             background-color: #121212;
-            color: #e0e0e0;
+            color: #e5e7eb;
         }
+
+        header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 450px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .theme-btn {
+            background-color: #f59e0b;
+            color: #0f172a;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Tabs Navigation */
+        .tabs-container {
+            display: flex;
+            background-color: #e5e7eb;
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        body.dark-theme .tabs-container {
+            background-color: #374151;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            background: none;
+            color: #4b5563;
+            cursor: pointer;
+        }
+        body.dark-theme .tab-btn {
+            color: #d1d5db;
+        }
+
+        .tab-btn.active {
+            background-color: #1e3a8a;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Dashboard Cards */
+        .grid-cards {
+            display: grid;
+            grid-cols: 2;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        body.dark-theme .card {
+            background-color: #1f2937;
+        }
+
+        .card-title {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        body.dark-theme .card-title {
+            color: #9ca3af;
+        }
+
+        .card-value {
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .border-income { border-top: 4px solid #16a34a; }
+        .border-expense { border-top: 4px solid #dc2626; }
+        .border-balance { border-top: 4px solid #2563eb; }
+        .border-savings { border-top: 4px solid #f97316; }
+        .border-lena { border-top: 4px solid #10b981; }
+        .border-dena { border-top: 4px solid #f43f5e; }
+
+        .text-income { color: #16a34a; }
+        .text-expense { color: #dc2626; }
+        .text-balance { color: #2563eb; }
+        .text-savings { color: #f97316; }
+        .text-lena { color: #10b981; }
+        .text-dena { color: #f43f5e; }
+
+        /* Forms styling */
+        .form-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        body.dark-theme .form-box {
+            background-color: #1f2937;
+        }
+
+        .form-box h3 {
+            text-align: center;
+            font-size: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-b: 1px solid #e5e7eb;
+            color: #1e3a8a;
+        }
+        body.dark-theme .form-box h3 {
+            color: #93c5fd;
+            border-bottom: 1px solid #374151;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        body.dark-theme .form-control {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: white;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-green { background-color: #16a34a; }
+        .btn-red { background-color: #dc2626; }
+        .btn-orange { background-color: #f97316; }
+        .btn-emerald { background-color: #059669; }
+        .btn-rose { background-color: #e11d48; }
+        .btn-slate { background-color: #475569; width: 100%; margin-top: 15px;}
+
+        /* Lists and History */
+        .history-box {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        body.dark-theme .history-box {
+            background-color: #1f2937;
+        }
+
+        .history-box h3 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        body.dark-theme .history-box h3 {
+            border-color: #374151;
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-h: 250px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 6px;
+            border-right: 4px solid #ccc;
+            font-size: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .list-item-left p {
+            font-weight: bold;
+        }
+        .list-item-left span {
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .list-item-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .list-item-right .amt {
+            font-weight: 900;
+        }
+        .list-item-right .del-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .list-item-right .del-btn:hover { color: #dc2626; }
+
+        .settle-btn {
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen transition-colors duration-300 pb-24" id="bodyContainer">
+<body id="bodyContainer">
 
     <!-- Header -->
-    <header class="bg-blue-900 text-white p-4 shadow-md sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center max-w-md">
-            <button id="themeToggleBtn" class="bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-full shadow transition-all" onclick="toggleTheme()">
-                🌙 نائٹ موڈ
-            </button>
-            <h1 class="text-xl font-bold text-center flex-1 pr-4">حساب کتاب ورژن 1.1</h1>
+    <header>
+        <div class="header-container">
+            <button id="themeToggleBtn" class="theme-btn" onclick="toggleTheme()">🌙 نائٹ موڈ</button>
+            <h1 style="font-size: 18px; font-weight: bold;">حساب کتاب ورژن 1.1</h1>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="container mx-auto p-4 max-w-md">
+    <!-- Main Content -->
+    <main>
 
         <!-- TAB NAVIGATION -->
-        <div class="flex bg-gray-200 dark:bg-gray-800 rounded-lg p-1 mb-6 shadow-inner">
-            <button id="tab-main" onclick="switchTab('main')" class="flex-1 py-2 text-center rounded-md font-bold text-sm bg-blue-900 text-white shadow">روزانہ کا حساب</button>
-            <button id="tab-udhar" onclick="switchTab('udhar')" class="flex-1 py-2 text-center rounded-md font-bold text-sm text-gray-700 dark:text-gray-300">ادھار کھاتہ 👥</button>
-            <button id="tab-report" onclick="switchTab('report')" class="flex-1 py-2 text-center rounded-md font-bold text-sm text-gray-700 dark:text-gray-300">رپورٹ</button>
+        <div class="tabs-container">
+            <button id="tab-main" onclick="switchTab('main')" class="tab-btn active">روزانہ کا حساب</button>
+            <button id="tab-udhar" onclick="switchTab('udhar')" class="tab-btn">ادھار کھاتہ 👥</button>
+            <button id="tab-report" onclick="switchTab('report')" class="tab-btn">رپورٹ</button>
         </div>
 
         <!-- ==================== SECTION 1: MAIN DASHBOARD ==================== -->
-        <div id="section-main" class="space-y-4">
-            <!-- 4 Dashboard Cards -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-t-4 border-green-600 text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">ٹوٹل آمدنی</p>
-                    <p class="text-xl font-black text-green-600 mt-1">Rs <span id="totalIncome">0</span></p>
+        <div id="section-main">
+            <div class="grid-cards">
+                <div class="card border-income">
+                    <p class="card-title">ٹوٹل آمدنی</p>
+                    <p class="card-value text-income">Rs <span id="totalIncome">0</span></p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-t-4 border-red-600 text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">ٹوٹل خرچہ</p>
-                    <p class="text-xl font-black text-red-600 mt-1">Rs <span id="totalExpense">0</span></p>
+                <div class="card border-expense">
+                    <p class="card-title">ٹوٹل خرچہ</p>
+                    <p class="card-value text-expense">Rs <span id="totalExpense">0</span></p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-t-4 border-blue-600 text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">باقی رقم (بیلنس)</p>
-                    <p class="text-xl font-black text-blue-600 mt-1">Rs <span id="netBalance">0</span></p>
+                <div class="card border-balance">
+                    <p class="card-title">باقی رقم (بیلنس)</p>
+                    <p class="card-value text-balance">Rs <span id="netBalance">0</span></p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-t-4 border-orange-500 text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">سیونگ گلاک 💰</p>
-                    <p class="text-xl font-black text-orange-500 mt-1">Rs <span id="totalSavings">0</span></p>
+                <div class="card border-savings">
+                    <p class="card-title">سیونگ گلاک 💰</p>
+                    <p class="card-value text-savings">Rs <span id="totalSavings">0</span></p>
                 </div>
             </div>
 
-            <!-- Main Input Form -->
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow space-y-4">
-                <h3 class="text-center font-bold text-blue-900 dark:text-blue-400 border-b pb-2 dark:border-gray-700">آمدنی، خرچہ اور سیونگ درج کریں</h3>
-                
-                <div>
-                    <label class="block text-xs font-bold mb-1">تاریخ:</label>
-                    <input type="date" id="mainDate" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+            <!-- Input Form -->
+            <div class="form-box">
+                <h3>آمدنی، خرچہ اور سیونگ درج کریں</h3>
+                <div class="form-group">
+                    <label>تاریخ:</label>
+                    <input type="date" id="mainDate" class="form-control">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1">رقم (روپے):</label>
-                    <input type="number" id="mainAmount" placeholder="مثال: 500" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                <div class="form-group">
+                    <label>رقم (روپے):</label>
+                    <input type="number" id="mainAmount" placeholder="مثال: 500" class="form-control">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1">کیٹیگری (صرف خرچے کے لیے):</label>
-                    <select id="mainCategory" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                <div class="form-group">
+                    <label>کیٹیگری (صرف خرچے کے لیے):</label>
+                    <select id="mainCategory" class="form-control">
                         <option value="راشن / گھر">🛒 راشن / گھر</option>
                         <option value="پٹرول / بائیک">⛽ پٹرول / بائیک</option>
                         <option value="چائے / ہوٹل">☕ چائے / ہوٹل</option>
@@ -86,89 +362,78 @@
                         <option value="دیگر اخراجات">💸 دیگر اخراجات</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1">تفصیل / کام کا نام (اختیاری):</label>
-                    <input type="text" id="mainDetails" placeholder="مثال: دوست کو چائے پلائی یا سیلری آئی" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                <div class="form-group">
+                    <label>تفصیل / کام کا نام (اختیاری):</label>
+                    <input type="text" id="mainDetails" placeholder="مثال: دوست کو چائے پلائی" class="form-control">
                 </div>
-
-                <div class="grid grid-cols-3 gap-2 pt-2">
-                    <button onclick="addMainEntry('income')" class="bg-green-600 hover:bg-green-700 text-white font-bold p-2 rounded-lg shadow text-xs">➕ آمدنی</button>
-                    <button onclick="addMainEntry('expense')" class="bg-red-600 hover:bg-red-700 text-white font-bold p-2 rounded-lg shadow text-xs">➖ خرچہ</button>
-                    <button onclick="addMainEntry('savings')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold p-2 rounded-lg shadow text-xs">💰 سیونگ</button>
+                <div class="btn-group">
+                    <button onclick="addMainEntry('income')" class="btn btn-green">➕ آمدنی</button>
+                    <button onclick="addMainEntry('expense')" class="btn btn-red">➖ خرچہ</button>
+                    <button onclick="addMainEntry('savings')" class="btn btn-orange">💰 سیونگ</button>
                 </div>
             </div>
 
-            <!-- Main Records History -->
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-                <h3 class="font-bold text-xs mb-3 border-b pb-2 dark:border-gray-700">آج کا لین دین کا ریکارڈ</h3>
-                <div id="mainHistoryList" class="space-y-2 max-h-60 overflow-y-auto">
-                    <!-- Dynamic Entries Here -->
-                </div>
+            <!-- History -->
+            <div class="history-box">
+                <h3>آج کا لین دین کا ریکارڈ</h3>
+                <div id="mainHistoryList" class="list-container"></div>
             </div>
         </div>
 
         <!-- ==================== SECTION 2: UDHAR DASHBOARD ==================== -->
-        <div id="section-udhar" class="hidden space-y-4">
-            <!-- Udhar Custom Dashboard Cards -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-t-4 border-emerald-500 text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">کل ادھار لینا ہے (ملے گا)</p>
-                    <p class="text-xl font-black text-emerald-500 mt-1">Rs <span id="totalUdharLena">0</span></p>
+        <div id="section-udhar" class="hidden">
+            <div class="grid-cards">
+                <div class="card border-lena">
+                    <p class="card-title">کل ادھار لینا ہے</p>
+                    <p class="card-value text-lena">Rs <span id="totalUdharLena">0</span></p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-t-4 border-rose-500 text-center">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">کل ادھار دینا ہے (واپس کرنا ہے)</p>
-                    <p class="text-xl font-black text-rose-500 mt-1">Rs <span id="totalUdharDena">0</span></p>
-                </div>
-            </div>
-
-            <!-- Udhar Input Form -->
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow space-y-4">
-                <h3 class="text-center font-bold text-purple-900 dark:text-purple-400 border-b pb-2 dark:border-gray-700">نیا ادھار کھاتہ درج کریں</h3>
-                <div>
-                    <label class="block text-xs font-bold mb-1">بندے کا نام:</label>
-                    <input type="text" id="udharName" placeholder="مثال: علی بھائی یا خان صاحب" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1">رقم (روپے):</label>
-                    <input type="number" id="udharAmount" placeholder="مثال: 1000" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1">تفصیل / تاریخ:</label>
-                    <input type="text" id="udharDetails" placeholder="مثال: بائیک کے لیے لیے یا سامان کے دیے" class="w-full p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 pt-2">
-                    <button onclick="addUdharEntry('lena')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold p-2 rounded-lg shadow text-sm">🟢 ادھار دیا (میں نے لینا ہے)</button>
-                    <button onclick="addUdharEntry('dena')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold p-2 rounded-lg shadow text-sm">🔴 ادھار لیا (میں نے دینا ہے)</button>
+                <div class="card border-dena">
+                    <p class="card-title">کل ادھار دینا ہے</p>
+                    <p class="card-value text-dena">Rs <span id="totalUdharDena">0</span></p>
                 </div>
             </div>
 
-            <!-- Udhar Active List -->
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
-                <h3 class="font-bold text-xs mb-3 border-b pb-2 dark:border-gray-700">باقی ادھار کھاتوں کی لسٹ</h3>
-                <div id="udharHistoryList" class="space-y-2">
-                    <!-- Dynamic Udhar Entries -->
+            <div class="form-box">
+                <h3 style="color: #7c3aed;">نیا ادھار کھاتہ درج کریں</h3>
+                <div class="form-group">
+                    <label>بندے کا نام:</label>
+                    <input type="text" id="udharName" placeholder="مثال: علی بھائی" class="form-control">
                 </div>
+                <div class="form-group">
+                    <label>رقم (روپے):</label>
+                    <input type="number" id="udharAmount" placeholder="مثال: 1000" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>تفصیل / تفصیلات:</label>
+                    <input type="text" id="udharDetails" placeholder="مثال: بائیک کے لیے لیے" class="form-control">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                    <button onclick="addUdharEntry('lena')" class="btn btn-emerald">🟢 ادھار دیا (لینا ہے)</button>
+                    <button onclick="addUdharEntry('dena')" class="btn btn-rose">🔴 ادھار لیا (دینا ہے)</button>
+                </div>
+            </div>
+
+            <div class="history-box">
+                <h3>باقی ادھار کھاتوں کی لسٹ</h3>
+                <div id="udharHistoryList" class="list-container"></div>
             </div>
         </div>
 
-        <!-- ==================== SECTION 3: REPORT DASHBOARD ==================== -->
-        <div id="section-report" class="hidden space-y-4">
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow text-center">
-                <h3 class="font-bold text-lg mb-4 text-blue-900 dark:text-blue-400">مکمل ڈیٹا بیک اپ</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-4 font-bold">آپ کا ڈیٹا کلاؤڈ (GitHub Link) پر ہر انٹری کے ساتھ خود بخود محفوظ ہو رہا ہے۔</p>
-                <button onclick="clearAllData()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold p-2 rounded-lg shadow w-full">⚠️ تمام ریکارڈز صاف کریں (Reset)</button>
+        <!-- ==================== SECTION 3: REPORT ==================== -->
+        <div id="section-report" class="hidden">
+            <div class="form-box" style="text-align: center;">
+                <h3 style="color: #1e3a8a;">مکمل ڈیٹا ری سیٹ</h3>
+                <p style="font-size: 12px; color: #6b7280; margin-bottom: 15px;">آپ کا ڈیٹا ہر انٹری کے ساتھ کلاؤڈ پر محفوظ ہو رہا ہے۔</p>
+                <button onclick="clearAllData()" class="btn btn-slate">⚠️ تمام ریکارڈز صاف کریں (Reset)</button>
             </div>
         </div>
 
     </main>
 
-    <!-- JS LOGIC SYSTEM -->
+    <!-- LOGIC CODES -->
     <script>
-        // Set Default Date To Today
         document.getElementById('mainDate').value = new Date().toISOString().split('T')[0];
 
-        // Database state object
         let db = {
             mainEntries: [],
             udharEntries: [],
@@ -180,12 +445,10 @@
             isDarkMode: false
         };
 
-        // Load Data from LocalStorage on Start
         function init() {
             const savedData = localStorage.getItem('mySavingsCloudDB');
             if(savedData) {
                 db = JSON.parse(savedData);
-                // backward compatibility fix just in case
                 if(!db.udharEntries) db.udharEntries = [];
                 if(!db.totalUdharLena) db.totalUdharLena = 0;
                 if(!db.totalUdharDena) db.totalUdharDena = 0;
@@ -196,48 +459,42 @@
             renderUdharHistory();
         }
 
-        // Save State To Storage
         function saveDB() {
             localStorage.setItem('mySavingsCloudDB', JSON.stringify(db));
             updateDashboardDOM();
         }
 
-        // Tab Switcher
         function switchTab(tabName) {
             document.getElementById('section-main').classList.add('hidden');
             document.getElementById('section-udhar').classList.add('hidden');
             document.getElementById('section-report').classList.add('hidden');
             
-            document.getElementById('tab-main').className = "flex-1 py-2 text-center rounded-md font-bold text-sm text-gray-700 dark:text-gray-300";
-            document.getElementById('tab-udhar').className = "flex-1 py-2 text-center rounded-md font-bold text-sm text-gray-700 dark:text-gray-300";
-            document.getElementById('tab-report').className = "flex-1 py-2 text-center rounded-md font-bold text-sm text-gray-700 dark:text-gray-300";
+            document.getElementById('tab-main').classList.remove('active');
+            document.getElementById('tab-udhar').classList.remove('active');
+            document.getElementById('tab-report').classList.remove('active');
 
             if(tabName === 'main') {
                 document.getElementById('section-main').classList.remove('hidden');
-                document.getElementById('tab-main').className = "flex-1 py-2 text-center rounded-md font-bold text-sm bg-blue-900 text-white shadow";
+                document.getElementById('tab-main').classList.add('active');
             } else if(tabName === 'udhar') {
                 document.getElementById('section-udhar').classList.remove('hidden');
-                document.getElementById('tab-udhar').className = "flex-1 py-2 text-center rounded-md font-bold text-sm bg-blue-900 text-white shadow";
+                document.getElementById('tab-udhar').classList.add('active');
             } else if(tabName === 'report') {
                 document.getElementById('section-report').classList.remove('hidden');
-                document.getElementById('tab-report').className = "flex-1 py-2 text-center rounded-md font-bold text-sm bg-blue-900 text-white shadow";
+                document.getElementById('tab-report').classList.add('active');
             }
         }
 
-        // Update Dashboard Values
         function updateDashboardDOM() {
             let balance = db.totalIncome - db.totalExpense - db.totalSavings;
-            
             document.getElementById('totalIncome').innerText = db.totalIncome;
             document.getElementById('totalExpense').innerText = db.totalExpense;
             document.getElementById('totalSavings').innerText = db.totalSavings;
             document.getElementById('netBalance').innerText = balance;
-
             document.getElementById('totalUdharLena').innerText = db.totalUdharLena;
             document.getElementById('totalUdharDena').innerText = db.totalUdharDena;
         }
 
-        // 1. ADD MAIN ENTRY (Income, Expense, Savings)
         function addMainEntry(type) {
             const amt = parseFloat(document.getElementById('mainAmount').value);
             const date = document.getElementById('mainDate').value;
@@ -245,134 +502,57 @@
             const details = document.getElementById('mainDetails').value.trim();
 
             if(!amt || amt <= 0) {
-                alert("برائے مہربانی درست رقم لکھیں!");
+                alert("درست رقم لکھیں!");
                 return;
             }
 
             const newEntry = {
                 id: Date.now(),
-                type: type, // 'income', 'expense', 'savings'
+                type: type,
                 amount: amt,
                 date: date,
-                category: type === 'expense' ? cat : (type === 'income' ? '💰 آمدنی' : '🐷 سیونگ گلاک'),
+                category: type === 'expense' ? cat : (type === 'income' ? '💰 آمدنی' : '🐷 سیونگ'),
                 details: details || 'کوئی تفصیل نہیں'
             };
 
             db.mainEntries.unshift(newEntry);
-
             if(type === 'income') db.totalIncome += amt;
             if(type === 'expense') db.totalExpense += amt;
             if(type === 'savings') db.totalSavings += amt;
 
             saveDB();
             renderMainHistory();
-
-            // Clear inputs
             document.getElementById('mainAmount').value = '';
             document.getElementById('mainDetails').value = '';
         }
 
-        // Delete Main Entry
         function deleteMainEntry(id, type, amount) {
             db.mainEntries = db.mainEntries.filter(item => item.id !== id);
             if(type === 'income') db.totalIncome -= amount;
             if(type === 'expense') db.totalExpense -= amount;
             if(type === 'savings') db.totalSavings -= amount;
-            
             saveDB();
             renderMainHistory();
         }
 
-        // Render Main History
         function renderMainHistory() {
             const listContainer = document.getElementById('mainHistoryList');
             listContainer.innerHTML = '';
-
             if(db.mainEntries.length === 0) {
-                listContainer.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">آج کوئی ریکارڈ موجود نہیں ہے۔</p>`;
+                listContainer.innerHTML = `<p style="text-align:center;font-size:11px;color:#9ca3af;padding:10px;">کوئی ریکارڈ نہیں ہے۔</p>`;
                 return;
             }
-
             db.mainEntries.forEach(item => {
-                let colorClass = 'border-green-500 text-green-600 bg-green-50 dark:bg-gray-900';
-                let typeSign = '➕';
-                if(item.type === 'expense') {
-                    colorClass = 'border-red-500 text-red-600 bg-red-50 dark:bg-gray-900';
-                    typeSign = '➖';
-                }
-                if(item.type === 'savings') {
-                    colorClass = 'border-orange-500 text-orange-600 bg-orange-50 dark:bg-gray-900';
-                    typeSign = '🐷';
-                }
+                let borderStyle = 'border-right: 4px solid #16a34a; background:#f0fdf4; color:#16a34a;';
+                let sign = '➕';
+                if(item.type === 'expense') { borderStyle = 'border-right: 4px solid #dc2626; background:#fef2f2; color:#dc2626;'; sign = '➖'; }
+                if(item.type === 'savings') { borderStyle = 'border-right: 4px solid #f97316; background:#fff7ed; color:#f97316;'; sign = '🐷'; }
 
                 listContainer.innerHTML += `
-                    <div class="flex justify-between items-center p-2.5 border-r-4 rounded shadow-sm text-xs ${colorClass}">
-                        <div>
-                            <p class="font-bold text-gray-800 dark:text-gray-200">${item.details} (${item.category})</p>
-                            <p class="text-[10px] text-gray-400 mt-0.5">${item.date}</p>
+                    <div class="list-item" style="${borderStyle}">
+                        <div class="list-item-left">
+                            <p style="color:#1f2937;">${item.details} (${item.category})</p>
+                            <span>${item.date}</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-black text-sm">${typeSign} Rs ${item.amount}</span>
-                            <button onclick="deleteMainEntry(${item.id}, '${item.type}', ${item.amount})" class="text-gray-400 hover:text-red-500 text-base font-bold px-1">×</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // ==================== ADVANCED UDHAR LOGIC ====================
-
-        // 2. ADD UDHAR ENTRY (Lending or Borrowing)
-        function addUdharEntry(type) {
-            const name = document.getElementById('udharName').value.trim();
-            const amt = parseFloat(document.getElementById('udharAmount').value);
-            const details = document.getElementById('udharDetails').value.trim();
-
-            if(!name) {
-                alert("برائے مہربانی بندے کا نام درج کریں!");
-                return;
-            }
-            if(!amt || amt <= 0) {
-                alert("برائے مہربانی درست رقم لکھیں!");
-                return;
-            }
-
-            // Create entry
-            const newUdhar = {
-                id: Date.now(),
-                name: name,
-                type: type, // 'lena' (Lent), 'dena' (Borrowed)
-                amount: amt,
-                details: details || 'ادھار کھاتہ'
-            };
-
-            db.udharEntries.unshift(newUdhar);
-
-            // ACCOUNTING IMPACT:
-            if(type === 'lena') {
-                // ادھار دیا: جیب سے نقد رقم گئی، یعنی باقی بیلنس کم ہو گیا۔
-                // لیکن ہم مین آمدنی نہیں چھیڑیں گے کیونکہ یہ خرچہ نہیں ہے، بس بیلنس کو مائنس کرنے کے لیے ہم ایک بیک گراؤنڈ خرچہ اثر ڈال سکتے ہیں یا ڈائریکٹ بیلنس کو کنٹرول کر سکتے ہیں۔ 
-                // پروفیشنل اکاؤنٹنگ کے لیے: ادھار دیا کا مطلب ہے نقد رقم گئی (خرچے کی طرح ریکارڈ ہوا تاکہ بیلنس کم ہو)
-                db.totalExpense += amt; 
-                db.totalUdharLena += amt;
-
-                // مین ہسٹری میں بھی شو کریں تاکہ یاد رہے
-                db.mainEntries.unshift({
-                    id: Date.now() + 1,
-                    type: 'expense',
-                    amount: amt,
-                    date: new Date().toISOString().split('T')[0],
-                    category: '👥 ادھار دیا',
-                    details: `${name} کو ادھار دیا`
-                });
-            } else if(type === 'dena') {
-                // ادھار لیا: جیب میں نقد رقم آئی، یعنی ٹوٹل آمدنی بڑھ گئی تاکہ آپ اسے خرچ کر سکیں۔
-                db.totalIncome += amt;
-                db.totalUdharDena += amt;
-
-                // مین ہسٹری میں شو کریں
-                db.mainEntries.unshift({
-                    id: Date.now() + 2,
-                    type: 'income',
-                    amount: amt,
-                    date: new Date().toISOStr
+                        <div class="list-item-right">
+                 
