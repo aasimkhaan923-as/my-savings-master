@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>میرا حساب کتاب اور سیونگ گلاک</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --royal-blue: #1a237e;
+            --light-blue: #0288d1;
+            --green-income: #2e7d32;
+            --red-expense: #c62828;
+            --orange-savings: #ef6c00;
+            --border-color: #d1d5db;
+            --tab-bg: #cfd8dc;
+        }
+        .dark-theme {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --royal-blue: #3f51b5;
+            --light-blue: #29b6f6;
+            --green-income: #81c784;
+            --red-expense: #e57373;
+            --orange-savings: #ffb74d;
+            --border-color: #444444;
+            --tab-bg: #262626;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* ٹاپ بار */
+        .top-bar { display: flex; width: 100%; max-width: 500px; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .theme-btn { background: var(--royal-blue); color: white; border: none; padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        
+        /* ٹابس سسٹم */
+        .tab-box { display: flex; width: 100%; max-width: 500px; margin-bottom: 15px; background: var(--tab-bg); border-radius: 8px; overflow: hidden; }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; background: transparent; border: none; font-size: 15px; font-weight: bold; cursor: pointer; color: var(--text-color); }
+        .tab-btn.active { background: var(--royal-blue); color: white; }
+        
+        .page { display: none; width: 100%; max-width: 500px; }
+        .page.active { display: block; }
+
+        /* ڈیش بورڈ بکسز */
+        .dashboard { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .dash-card { background: var(--card-bg); padding: 12px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid var(--border-color); text-align: center; }
+        .dash-card h3 { font-size: 13px; color: #7f8c8d; margin-bottom: 5px; }
+        .dash-card p { font-size: 18px; font-weight: bold; }
+        
+        .main-card { background-color: var(--card-bg); width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border-top: 6px solid var(--royal-blue); padding: 20px; }
+        h2 { text-align: center; color: var(--royal-blue); font-size: 20px; margin-bottom: 15px; }
+        
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; outline: none; background-color: var(--card-bg); color: var(--text-color); }
+        
+        .btn-box { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .action-btn { color: white; border: none; padding: 12px 5px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .search-box { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); }
+        .list-container { width: 100%; margin-top: 15px; }
+        .list-title { font-size: 16px; font-weight: bold; margin-bottom: 8px; border-bottom: 2px solid var(--royal-blue); padding-bottom: 4px; display: flex; justify-content: space-between; }
+
+        /* لسٹ کارڈز */
+        .record-item { background: var(--card-bg); padding: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        
+        /* الرٹ میسجز */
+        .summary-alert { padding: 12px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 12px; font-size: 14px; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span style="font-weight: bold; font-size: 14px; color: var(--royal-blue);">حساب کتاب ورژن 1.0</span>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 نائٹ موڈ</button>
+    </div>
+
+    <div class="dashboard">
+        <div class="dash-card" style="border-top-color: var(--green-income);">
+            <h3>ٹوٹل آمدنی</h3>
+            <p style="color: var(--green-income);" id="boxIncome">Rs 0</p>
+        </div>
+        <div class="dash-card" style="border-top-color: var(--red-expense);">
+            <h3>ٹوٹل خرچہ</h3>
+            <p style="color: var(--red-expense);" id="boxExpense">Rs 0</p>
+        </div>
+        <div class="dash-card" style="border-top-color: var(--orange-savings);">
+            <h3>سیونگ گلاک 💰</h3>
+            <p style="color: var(--orange-savings);" id="boxSavings">Rs 0</p>
+        </div>
+        <div class="dash-card" style="border-top-color: var(--light-blue);">
+            <h3>باقی رقم (بیلنس)</h3>
+            <p style="color: var(--light-blue);" id="boxBalance">Rs 0</p>
+        </div>
+    </div>
+
+    <div class="tab-box">
+        <button class="tab-btn active" id="tab1" onclick="switchTab('mainPage', 'tab1')">روزانہ کا حساب</button>
+        <button class="tab-btn" id="tab2" onclick="switchTab('udharPage', 'tab2')">اُدھار لسٹ</button>
+        <button class="tab-btn" id="tab3" onclick="switchTab('historyPage', 'tab3')">ماہانہ رپورٹ</button>
+    </div>
+
+    <div id="mainPage" class="page active">
+        <div class="main-card">
+            <h2>آمدنی، خرچہ اور سیونگ درج کریں</h2>
+            <div id="monthlyAlert"></div>
+            <div class="form-group"><label>تاریخ:</label><input type="date" id="inputDate"></div>
+            <div class="form-group"><label>رقم (روپے):</label><input type="number" id="inputAmount" placeholder="مثال: 500"></div>
+            <div class="form-group"><label>کیٹیگری (صرف خرچے کے لیے):</label>
+                <select id="inputCategory">
+                    <option value="⛽ پٹرول / بائیک">⛽ پٹرول / بائیک</option>
+                    <option value="🍔 کھانا / چائے">🍔 کھانا / چائے</option>
+                    <option value="📱 موبائل لوڈ / نیٹ">📱 موبائل لوڈ / نیٹ</option>
+                    <option value="🛍️ گھر کا راشن">🛍️ گھر کا راشن</option>
+                    <option value="🏥 صحت / ڈاکٹر / دوائی">🏥 صحت / ڈاکٹر / دوائی</option>
+                    <option value="✍️ دیگر کھلی تفصیل">✍️ دیگر کھلی تفصیل</option>
+                </select>
+            </div>
+            <div class="form-group"><label>تفصیل / کام کا نام (اختیاری):</label><input type="text" id="inputDetail" placeholder="مثال: دوست کو چائے پلائی یا سیلری آئی"></div>
+            
+            <div class="btn-box">
+                <button class="action-btn" style="background-color: var(--green-income);" onclick="addTransaction('income')">➕ آمدنی</button>
+                <button class="action-btn" style="background-color: var(--red-expense);" onclick="addTransaction('expense')">➖ خرچہ</button>
+                <button class="action-btn" style="background-color: var(--orange-savings);" onclick="addTransaction('savings')">💰 سیونگ</button>
+            </div>
+        </div>
+
+        <div class="list-container">
+            <div class="list-title">آج کا لین دین کا ریکارڈ</div>
+            <div id="currentTransactions"></div>
+        </div>
+    </div>
+
+    <div id="udharPage" class="page">
+        <div class="main-card" style="border-top-color: #ff9800;">
+            <h2>🤝 اُدھار کھاتہ کا ریکارڈ</h2>
+            <div class="form-group"><label>بندے کا نام:</label><input type="text" id="udharName" placeholder="مثال: علی بھائی"></div>
+            <div class="form-group"><label>رقم (روپے):</label><input type="number" id="udharAmount" placeholder="مثال: 2000"></div>
+            <div class="form-group"><label>قسم (Type):</label>
+                <select id="udharType">
+                    <option value="pese_lene_hen">میں نے پیسے لینے ہیں (قرض دیا ہے)</option>
+                    <option value="pese_dene_hen">میں نے پیسے دینے ہیں (قرض لیا ہے)</option>
+                </select>
+            </div>
+            <button class="action-btn" style="background-color: #ff9800; width:100%; margin-top:10px;" onclick="addUdhar()">اُدھار محفوظ کریں</button>
+        </div>
+
+        <div class="list-container">
+            <div class="list-title">باقی اُدھار کا چٹھا</div>
+            <div id="udharContainer"></div>
+        </div>
+    </div>
+
+    <div id="historyPage" class="page">
+        <div class="main-card" style="border-top-color: #607d8b;">
+            <h2>🔍 پچھلی ماہانہ ہسٹری تلاش کریں</h2>
+            <input type="text" class="search-box" id="searchBar" onkeyup="searchHistory()" placeholder="🔍 مہینہ یا تفصیل لکھیں (مثال: June یا راشن)...">
+            <button class="delete-btn" style="background-color: #7f8c8d; width: 100%; padding: 8px; font-weight: bold; margin-bottom: 10px;" onclick="resetAllData()">🧹 ایپ کا پورا ڈیٹا صاف کریں</button>
+        </div>
+
+        <div class="list-container">
+            <div class="list-title">مکمل محفوظ ہسٹری</div>
+            <div id="historyContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('inputDate').valueAsDate = new Date();
+        
+        let financeData = JSON.parse(localStorage.getItem('my_finance_master')) || { transactions: [], udhar: [] };
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            document.getElementById('themeBtn').innerText = isDark ? "☀️ لائٹ موڈ" : "🌙 نائٹ موڈ";
+        }
+
+        function switchTab(pageId, tabId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function updateDashboard() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let totalSavings = 0;
+
+            financeData.transactions.forEach(item => {
+                if(item.type === 'income') totalIncome += item.amount;
+                if(item.type === 'expense') totalExpense += item.amount;
+                if(item.type === 'savings') totalSavings += item.amount;
+            });
+
+            let currentBalance = totalIncome - totalExpense - totalSavings;
+
+            document.getElementById('boxIncome').innerText = "Rs " + totalIncome;
+            document.getElementById('boxExpense').innerText = "Rs " + totalExpense;
+            document.getElementById('boxSavings').innerText = "Rs " + totalSavings;
+            document.getElementById('boxBalance').innerText = "Rs " + currentBalance;
+
+            // مہینے کے آخر کا نفع یا نقصان الرٹ باکس
+            const alertBox = document.getElementById('monthlyAlert');
+            if (totalIncome > 0) {
+                if (totalExpense > totalIncome) {
+                    alertBox.className = "summary-alert alert-danger";
+                    alertBox.innerText = "⚠️ خان بھائی ہوشیار! آپ کا خرچہ اس مہینے آپ کی کل آمدنی سے زیادہ ہو گیا ہے!";
+                } else {
+                    let bachat = totalIncome - totalExpense;
+                    alertBox.className = "summary-alert alert-success";
+                    alertBox.innerText = "🎉 ماشاءاللہ خان بھائی! آپ زبردست جا رہے ہیں، اب تک کل بچت Rs " + bachat + " ہے۔";
+                }
+            } else {
+                alertBox.innerHTML = "";
+                alertBox.className = "";
+            }
+        }
+
+        function addTransaction(type) {
+            const dateInput = document.getElementById('inputDate').value;
+            const amount = parseInt(document.getElementById('inputAmount').value);
+            let detail = document.getElementById('inputDetail').value.trim();
+            const category = document.getElementById('inputCategory').value;
+
+            if(!amount || amount <= 0) { alert('براہ کرم صحیح رقم لکھیں!'); return; }
+            
+            // اگر تفصیل خالی ہو تو کیٹیگری کا نام ہی تفصیل بن جائے گا
+            if(!detail) {
+                if(type === 'income') detail = "آمدنی آئی";
+                else if(type === 'savings') detail = "سیونگ گلاک میں جمع";
+                else detail = category;
+            } else if (type === 'expense') {
+                detail = category + " (" + detail + ")";
+            }
+
+            // مہینہ فارمیٹ سیٹ کرنا تلاش کے لیے
+            const dateObj = new Date(dateInput);
+            const monthName = dateObj.toLocaleString('en-US', { month: 'long' }) + " " + dateObj.getFullYear();
+
+            financeData.transactions.push({ date: dateInput, month: monthName, amount, type, detail });
+            localStorage.setItem('my_finance_master', JSON.stringify(financeData));
+
+            document.getElementById('inputAmount').value = '';
+            document.getElementById('inputDetail').value = '';
+            
+            displayTransactions();
+            updateDashboard();
+        }
+
+        function displayTransactions(filteredData = financeData.transactions) {
+            const currentContainer = document.getElementById('currentTransactions');
+            const historyContainer = document.getElementById('historyContainer');
+            
+            currentContainer.innerHTML = '';
+            historyContainer.innerHTML = '';
+
+            if(filteredData.length === 0) {
+                currentContainer.innerHTML = '<div style="text-align:center; color:#95a5a6; padding:10px;">کوئی ریکارڈ درج نہیں ہے۔</div>';
+                historyContainer.innerHTML = '<div style="text-align:center; color:#95a5a6; padding:10px;">کوئی ریکارڈ نہیں ملا۔</div>';
+                return;
+            }
+
+            for(let i = filteredData.length - 1; i >= 0; i--) {
+                const item = filteredData[i];
+                let colorClass = 'var(--light-blue)';
+                let prefix = '';
+                if(item.type === 'income') { colorClass = 'var(--green-income)'; prefix = '[آمدنی] +'; }
+                if(item.type === 'expense') { colorClass = 'var(--red-expense)'; prefix = '[خرچہ] -'; }
+                if(item.type === 'savings') { colorClass = 'var(--orange-savings)'; prefix = '[سیونگ] 💰'; }
+
+                const cardHtml = `<div class="record-item" style="border-right: 5px solid ${colorClass};">
+                    <div>
+                        <p style="font-weight:bold; color:${colorClass};">${prefix} Rs ${item.amount}</p>
+                        <p style="font-size:12px; color:#7f8c8d;">${item.date} | ${item.detail}</p>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTransaction(${i})">مٹائیں</button>
+                </div>`;
+
+                // آج کا ریکارڈ دکھانے کے لیے
+                const todayStr = new Date().toISOString().split('T')[0];
+                if(item.date === todayStr) {
+                    currentContainer.innerHTML += cardHtml;
+                }
+                // ہسٹری والے پیج کے لیے
+                historyContainer.innerHTML += cardHtml;
+            }
+            
+            if(currentContainer.innerHTML === '') {
+                currentContainer.innerHTML = '<div style="text-align:center; color:#95a5a6; padding:10px;">آج کی تاریخ میں ابھی کوئی لین دین نہیں ہوا۔</div>';
+            }
+        }
+
+        function deleteTransaction(index) {
+            if(confirm('کیا آپ یہ ریکارڈ مٹانا چاہتے ہیں؟')) {
+                financeData.transactions.splice(index, 1);
+                localStorage.setItem('my_finance_master', JSON.stringify(financeData));
+                displayTransactions();
+                updateDashboard();
+            }
+        }
+
+        function addUdhar() {
+            const name = document.getElementById('udharName').value.trim();
+            const amount = parseInt(document.getElementById('udharAmount').value);
+            const type = document.getElementById('udharType').value;
+
+            if(!name || !amount) { alert('براہ کرم نام اور رقم مکمل لکھیں!'); return; }
+
+            financeData.udhar.push({ name, amount, type });
+            localStorage.setItem('my_finance_master', JSON.stringify(financeData));
+
+            document.getElementById('udharName').value = '';
+            document.getElementById('udharAmount').value = '';
+
+            displayUdhar();
+        }
+
+        function displayUdhar() {
+            const container = document.getElementById('udharContainer');
+            container.innerHTML = '';
+
+            if(financeData.udhar.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#95a5a6; padding:10px;">کوئی بقایا ادھار نہیں ہے۔</div>';
+                return;
+            }
+
+            financeData.udhar.forEach((item, index) => {
+                let borderCol = item.type === 'pese_lene_hen' ? '#2e7d32' : '#c62828';
+                let textText = item.type === 'pese_lene_hen' ? 'پیسے لینے ہیں (قرض دیا ہے)' : 'پیسے دینے ہیں (قرض لیا ہے)';
+
+                container.innerHTML += `<div class="record-item" style="border-right: 5px solid ${borderCol};">
+                    <div>
+                        <p style="font-weight:bold;">${item.name}: <span style="color:${borderCol};">Rs ${item.amount}</span></p>
+                        <p style="font-size:12px; color:#7f8c8d;">حالت: ${textText}</p>
+                    </div>
+                    <button class="delete-btn" style="background-color:#2e7d32;" onclick="clearUdhar(${index})">خلاص (Paid)</button>
+                </div>`;
+            });
+        }
+
+        function clearUdhar(index) {
+            if(confirm('کیا یہ ادھار پورا چکتہ (Paid) ہو گیا ہے؟')) {
+                financeData.udhar.splice(index, 1);
+                localStorage.setItem('my_finance_master', JSON.stringify(financeData));
+                displayUdhar();
+            }
+        }
+
+        function searchHistory() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const filtered = financeData.transactions.filter(item => 
+                item.detail.toLowerCase().includes(query) || 
+                item.month.toLowerCase().includes(query) || 
+                item.date.includes(query)
+            );
+            displayTransactions(filtered);
+        }
+
+        function resetAllData() {
+            if(confirm('ہوشیار خان بھائی! کیا آپ سچی میں ایپ کا پورا ریکارڈ مٹانا چاہتے ہیں؟ پرانا سارا حساب ڈیلیٹ ہو جائے گا۔')) {
+                financeData = { transactions: [], udhar: [] };
+                localStorage.setItem('my_finance_master', JSON.stringify(financeData));
+                displayTransactions();
+                displayUdhar();
+                updateDashboard();
+            }
+        }
+
+        // ایپ شروع ہوتے ہی ڈیٹا لوڈ کرنا
+        updateDashboard();
+        displayTransactions();
+        displayUdhar();
+    </script>
+</body>
+  </html>
+  
