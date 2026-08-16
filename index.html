@@ -162,3 +162,259 @@ html[data-theme=dark] .type-btn.active{color:#06251f}
 .modal-actions{display:flex;gap:10px}
 .modal-actions .btn{margin-top:14px}
 .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:20px;font-size:13px;z-index:20;box-shadow:var(--shadow)}
+/* ========= HISAB KITAAB - firebase.js ========= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBHpBbHUqTR-q1MdxJEzguJIkuixkxVLBI",
+  authDomain: "hisaabkitaab-13d52.firebaseapp.com",
+  databaseURL: "https://hisaabkitaab-13d52-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hisaabkitaab-13d52",
+  storageBucket: "hisaabkitaab-13d52.firebasestorage.app",
+  messagingSenderId: "194563862363",
+  appId: "1:194563862363:web:536f2deae7dda9358cf47e",
+  measurementId: "G-Y07XTW1ZH2"
+};
+
+let db = null;
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+} catch (e) {
+  console.error("Firebase init failed:", e);
+}
+
+function isFirebaseReady() {
+  return !!db;
+}
+/* ========= HISAB KITAAB - app.js ========= */
+(function () {
+  "use strict";
+
+  /* ---------- helpers ---------- */
+  const $ = id => document.getElementById(id);
+  const store = {
+    get: k => localStorage.getItem(k),
+    set: (k, v) => localStorage.setItem(k, v),
+    del: k => localStorage.removeItem(k)
+  };
+  function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.remove('hidden');
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.add('hidden'), 2500);
+  }
+  function fmt(n) { return 'Rs ' + Number(n || 0).toLocaleString(); }
+  function fmtDate(ts) {
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+  function esc(s) {
+    return String(s || '').replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+  }
+
+  /* ---------- theme (auto from phone + manual toggle) ---------- */
+  function applyTheme() {
+    const saved = store.get('hk_theme');
+    const dark = saved ? saved === 'dark'
+      : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  }
+  $('btn-theme').onclick = () => {
+    const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    store.set('hk_theme', cur); applyTheme();
+  };
+
+  /* ---------- state ---------- */
+  let myName = '', roomCode = '', entries = {}, members = {}, filter = 'all', entryType = 'expense';
+  const CATS = {
+    expense: ['Food', 'Travel', 'Bills', 'Shopping', 'Health', 'Education', 'Other'],
+    income: ['Salary', 'Business', 'Gift', 'Rent', 'Other']
+  };
+  function fillCats() {
+    const sel = $('inp-category'); sel.innerHTML = '';
+    CATS[entryType].forEach(c => {
+      const o = document.createElement('option'); o.textContent = c; sel.appendChild(o);
+    });
+  }
+
+  /* ---------- create / join room ---------- */
+  $('btn-create').onclick = () => {
+    const name = $('inp-name').value.trim();
+    if (!name) return toast('Please enter your name');
+    if (!isFirebaseReady()) return toast('Firebase not connected yet');
+    myName = name; store.set('hk_name', name);
+    const code = String(Math.floor(10000 + Math.random() * 90000));
+    const uid = store.get('hk_uid') || String(Date.now()); store.set('hk_uid', uid);
+    const updates = {};
+    updates['rooms/' + code + '/info/createdAt'] = Date.now();
+    updates['rooms/' + code + '/members/' + uid] = { name: name, joinedAt: Date.now() };
+    db.ref().update(updates).then(() => {
+      store.set('hk_room', code);
+      enterRoom(code);
+      toast('Room created: ' + code);
+    }).catch(e => toast('Error: ' + e.message));
+  };
+
+  $('btn-join').onclick = () => {
+    const name = $('inp-name').value.trim();
+    const code = $('inp-code').value.trim();
+    if (!name) return toast('Please enter your name');
+    if (!/^\d{5}$/.test(code)) return toast('Code must be 5 digits');
+    if (!isFirebaseReady()) return toast('Firebase not connected yet');
+    myName = name; store.set('hk_name', name);
+    db.ref('rooms/' + code + '/info').once('value').then(s => {
+      if (!s.exists()) return toast('Room not found');
+      const uid = store.get('hk_uid') || String(Date.now()); store.set('hk_uid', uid);
+      return db.ref('rooms/' + code + '/members/' + uid).set({ name: name, joinedAt: Date.now() }).then(() => {
+        store.set('hk_room', code);
+        enterRoom(code);
+        toast('Joined room ' + code);
+      });
+    }).catch(e => toast('Error: ' + e.message));
+  };
+
+  /* ---------- live sync ---------- */
+  function enterRoom(code) {
+    roomCode = code;
+    $('screen-home').classList.remove('active');
+    $('screen-room').classList.add('active');
+    $('room-code').textContent = 'Room ' + code;
+    entries = {}; members = {};
+    db.ref('rooms/' + code + '/entries').on('child_added', s => { entries[s.key] = Object.assign({ key: s.key }, s.val()); render(); });
+    db.ref('rooms/' + code + '/entries').on('child_changed', s => { entries[s.key] = Object.assign({ key: s.key }, s.val()); render(); });
+    db.ref('rooms/' + code + '/entries').on('child_removed', s => { delete entries[s.key]; render(); });
+    db.ref('rooms/' + code + '/members').on('child_added', s => { members[s.key] = s.val().name; render(); });
+  }
+
+  $('btn-leave').onclick = () => { store.del('hk_room'); location.reload(); };
+
+  $('btn-share').onclick = () => {
+    const text = 'Join my Hisab Kitaab room! Code: ' + roomCode;
+    if (navigator.share) navigator.share({ text: text }).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Code copied'));
+    else toast('Room code: ' + roomCode);
+  };
+
+  /* ---------- filters ---------- */
+  document.querySelectorAll('.chip[data-filter]').forEach(ch => {
+    ch.onclick = () => {
+      document.querySelectorAll('.chip[data-filter]').forEach(c => c.classList.remove('active'));
+      ch.classList.add('active');
+      filter = ch.dataset.filter; render();
+    };
+  });
+
+  /* ---------- render ---------- */
+  function filteredEntries() {
+    const now = new Date();
+    const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    return Object.values(entries).filter(e => {
+      if (filter === 'today') return e.at >= startToday;
+      if (filter === 'month') return e.at >= startMonth;
+      return true;
+    }).sort((a, b) => b.at - a.at);
+  }
+
+  function render() {
+    const list = filteredEntries();
+    let inc = 0, exp = 0; const per = {};
+    list.forEach(e => {
+      if (e.type === 'income') inc += e.amount; else exp += e.amount;
+      per[e.by] = per[e.by] || { inc: 0, exp: 0 };
+      if (e.type === 'income') per[e.by].inc += e.amount; else per[e.by].exp += e.amount;
+    });
+    $('sum-income').textContent = fmt(inc);
+    $('sum-expense').textContent = fmt(exp);
+    $('sum-balance').textContent = fmt(inc - exp);
+
+    const bar = $('members-bar'); bar.innerHTML = '';
+    Object.keys(members).forEach(k => {
+      const n = members[k], p = per[n];
+      const div = document.createElement('div'); div.className = 'member-chip';
+      div.textContent = n + (p ? ' · +' + p.inc.toLocaleString() + ' / -' + p.exp.toLocaleString() : '');
+      bar.appendChild(div);
+    });
+
+    const box = $('entries'); box.innerHTML = '';
+    if (!list.length) { box.innerHTML = '<div class="empty">No entries yet. Tap + to add the first one.</div>'; return; }
+    list.forEach(e => {
+      const div = document.createElement('div');
+      div.className = 'entry ' + (e.type === 'income' ? 'in' : 'out');
+      div.innerHTML =
+        '<div class="e-left"><span class="e-sign">' + (e.type === 'income' ? '+' : '-') + '</span>' +
+        '<div><div class="e-title">' + esc(e.category) + (e.note ? ' - ' + esc(e.note) : '') + '</div>' +
+        '<div class="e-sub">' + esc(e.by) + ' · ' + fmtDate(e.at) + '</div></div></div>' +
+        '<div class="e-right"><span class="e-amt">' + fmt(e.amount) + '</span>' +
+        '<button class="e-del" data-k="' + e.key + '">x</button></div>';
+      box.appendChild(div);
+    });
+    box.querySelectorAll('.e-del').forEach(b => {
+      b.onclick = () => {
+        if (confirm('Delete this entry for everyone?')) {
+          db.ref('rooms/' + roomCode + '/entries/' + b.dataset.k).remove();
+        }
+      };
+    });
+  }
+
+  /* ---------- add entry modal ---------- */
+  $('btn-add').onclick = () => { $('modal-add').classList.remove('hidden'); $('inp-amount').value = ''; $('inp-note').value = ''; fillCats(); };
+  $('btn-cancel').onclick = () => $('modal-add').classList.add('hidden');
+  $('type-expense').onclick = () => setType('expense');
+  $('type-income').onclick = () => setType('income');
+  function setType(t) {
+    entryType = t;
+    $('type-expense').classList.toggle('active', t === 'expense');
+    $('type-income').classList.toggle('active', t === 'income');
+    fillCats();
+  }
+  $('btn-save').onclick = () => {
+    const amount = parseFloat($('inp-amount').value);
+    if (!amount || amount <= 0) return toast('Enter a valid amount');
+    const data = {
+      type: entryType, amount: amount,
+      category: $('inp-category').value,
+      note: $('inp-note').value.trim(),
+      by: myName, at: Date.now()
+    };
+    db.ref('rooms/' + roomCode + '/entries').push(data)
+      .then(() => { $('modal-add').classList.add('hidden'); toast('Saved for everyone'); })
+      .catch(e => toast('Error: ' + e.message));
+  };
+
+  /* ---------- PDF statement ---------- */
+  $('btn-pdf').onclick = () => {
+    const list = filteredEntries().slice().sort((a, b) => a.at - b.at);
+    if (!list.length) return toast('Nothing to export');
+    const doc = new window.jspdf.jsPDF();
+    let inc = 0, exp = 0;
+    list.forEach(e => e.type === 'income' ? inc += e.amount : exp += e.amount);
+    doc.setFontSize(18); doc.setTextColor(15, 118, 110);
+    doc.text('Hisab Kitaab - Statement', 14, 18);
+    doc.setFontSize(10); doc.setTextColor(90);
+    doc.text('Room code: ' + roomCode, 14, 26);
+    doc.text('Period: ' + ({ all: 'All time', today: 'Today', month: 'This month' }[filter]), 14, 31);
+    doc.text('Generated: ' + fmtDate(Date.now()) + ' by ' + myName, 14, 36);
+    doc.text('Income: Rs ' + inc.toLocaleString() + '  |  Expense: Rs ' + exp.toLocaleString() + '  |  Balance: Rs ' + (inc - exp).toLocaleString(), 14, 43);
+    doc.autoTable({
+      startY: 48,
+      head: [['Date', 'Type', 'Category', 'Note', 'By', 'Amount']],
+      body: list.map(e => [fmtDate(e.at), e.type === 'income' ? 'IN' : 'OUT', e.category, e.note || '-', e.by, 'Rs ' + e.amount.toLocaleString()]),
+      headStyles: { fillColor: [15, 118, 110] },
+      styles: { fontSize: 8 }
+    });
+    doc.save('HisabKitaab-' + roomCode + '-statement.pdf');
+    toast('PDF downloaded');
+  };
+
+  /* ---------- init ---------- */
+  applyTheme();
+  fillCats();
+  $('inp-name').value = store.get('hk_name') || '';
+  if (!isFirebaseReady()) $('firebase-warning').classList.remove('hidden');
+  const savedRoom = store.get('hk_room');
+  if (savedRoom && isFirebaseReady()) {
+    myName = store.get('hk_name') || 'Member';
+    enterRoom(savedRoom);
+  }
+})();
