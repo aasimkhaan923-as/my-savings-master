@@ -1,557 +1,423 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حساب کتاب ورژن 1.1</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Urdu:wght=400;700&display=swap');
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans Urdu', sans-serif;
-        }
-
-        body {
-            background-color: #f3f4f6;
-            color: #1f2937;
-            padding-bottom: 60px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        body.dark-theme {
-            background-color: #121212;
-            color: #e5e7eb;
-        }
-
-        header {
-            background-color: #1e3a8a;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .header-container {
-            max-width: 450px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .theme-btn {
-            background-color: #f59e0b;
-            color: #0f172a;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        main {
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 15px;
-        }
-
-        /* Tabs Navigation */
-        .tabs-container {
-            display: flex;
-            background-color: #e5e7eb;
-            padding: 4px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        body.dark-theme .tabs-container {
-            background-color: #374151;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13px;
-            background: none;
-            color: #4b5563;
-            cursor: pointer;
-        }
-        body.dark-theme .tab-btn {
-            color: #d1d5db;
-        }
-
-        .tab-btn.active {
-            background-color: #1e3a8a;
-            color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* Dashboard Cards */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        body.dark-theme .card {
-            background-color: #1f2937;
-        }
-
-        .card-title {
-            font-size: 11px;
-            color: #6b7280;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-        body.dark-theme .card-title {
-            color: #9ca3af;
-        }
-
-        .card-value {
-            font-size: 18px;
-            font-weight: 900;
-        }
-
-        .border-income { border-top: 4px solid #16a34a; }
-        .border-expense { border-top: 4px solid #dc2626; }
-        .border-balance { border-top: 4px solid #2563eb; }
-        .border-savings { border-top: 4px solid #f97316; }
-        .border-lena { border-top: 4px solid #10b981; }
-        .border-dena { border-top: 4px solid #f43f5e; }
-
-        .text-income { color: #16a34a; }
-        .text-expense { color: #dc2626; }
-        .text-balance { color: #2563eb; }
-        .text-savings { color: #f97316; }
-        .text-lena { color: #10b981; }
-        .text-dena { color: #f43f5e; }
-
-        /* Forms styling */
-        .form-box {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        body.dark-theme .form-box {
-            background-color: #1f2937;
-        }
-
-        .form-box h3 {
-            text-align: center;
-            font-size: 15px;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e5e7eb;
-            color: #1e3a8a;
-        }
-        body.dark-theme .form-box h3 {
-            color: #93c5fd;
-            border-bottom: 1px solid #374151;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 13px;
-        }
-        body.dark-theme .form-control {
-            background-color: #374151;
-            border-color: #4b5563;
-            color: white;
-        }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .btn {
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .btn-green { background-color: #16a34a; }
-        .btn-red { background-color: #dc2626; }
-        .btn-orange { background-color: #f97316; }
-        .btn-emerald { background-color: #059669; }
-        .btn-rose { background-color: #e11d48; }
-        .btn-slate { background-color: #475569; width: 100%; margin-top: 15px;}
-
-        /* Lists and History */
-        .history-box {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        body.dark-theme .history-box {
-            background-color: #1f2937;
-        }
-
-        .history-box h3 {
-            font-size: 12px;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        body.dark-theme .history-box h3 {
-            border-color: #374151;
-        }
-
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-radius: 6px;
-            border-right: 4px solid #ccc;
-            font-size: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
-
-        .list-item-left p {
-            font-weight: bold;
-        }
-        .list-item-left span {
-            font-size: 10px;
-            color: #9ca3af;
-        }
-
-        .list-item-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .list-item-right .amt {
-            font-weight: 900;
-        }
-        .list-item-right .del-btn {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .list-item-right .del-btn:hover { color: #dc2626; }
-
-        .settle-btn {
-            background-color: #1e3a8a;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .hidden { display: none !important; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Budget— Shared Family Account</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
-<body id="bodyContainer">
+<body>
 
-    <!-- Header -->
-    <header>
-        <div class="header-container">
-            <button id="themeToggleBtn" class="theme-btn" onclick="toggleTheme()">🌙 نائٹ موڈ</button>
-            <h1 style="font-size: 18px; font-weight: bold;">حساب کتاب ورژن 1.1</h1>
-        </div>
+  <!-- HOME SCREEN -->
+  <div id="screen-home" class="screen active">
+    <div class="home-card">
+      <div class="logo">💰</div>
+      <h1>Sanjha Hisab</h1>
+      <p class="tagline">Shared family account — live for everyone</p>
+
+      <div id="firebase-warning" class="warning hidden">Firebase not connected. Paste your config in firebase.js first.</div>
+
+      <label>Your name</label>
+      <input id="inp-name" type="text" maxlength="20" placeholder="e.g. Ahmed" />
+
+      <button id="btn-create" class="btn primary">Create Room</button>
+
+      <div class="divider"><span>OR</span></div>
+
+      <label>Room code</label>
+      <input id="inp-code" type="number" inputmode="numeric" placeholder="5-digit code" />
+      <button id="btn-join" class="btn secondary">Join Room</button>
+    </div>
+  </div>
+
+  <!-- ROOM SCREEN -->
+  <div id="screen-room" class="screen">
+    <header class="topbar">
+      <div>
+        <div class="room-code" id="room-code">----</div>
+        <div class="room-sub">Shared family account</div>
+      </div>
+      <div class="top-actions">
+        <button id="btn-theme" class="icon-btn" title="Theme">🌓</button>
+        <button id="btn-share" class="icon-btn" title="Share code">🔗</button>
+        <button id="btn-leave" class="icon-btn" title="Leave">🚪</button>
+      </div>
     </header>
 
-    <!-- Main Content -->
-    <main>
+    <section class="cards">
+      <div class="card income"><small>Income</small><strong id="sum-income">Rs 0</strong></div>
+      <div class="card expense"><small>Expense</small><strong id="sum-expense">Rs 0</strong></div>
+      <div class="card balance"><small>Balance</small><strong id="sum-balance">Rs 0</strong></div>
+    </section>
 
-        <!-- TAB NAVIGATION -->
-        <div class="tabs-container">
-            <button id="tab-main" onclick="switchTab('main')" class="tab-btn active">روزانہ کا حساب</button>
-            <button id="tab-udhar" onclick="switchTab('udhar')" class="tab-btn">ادھار کھاتہ 👥</button>
-            <button id="tab-report" onclick="switchTab('report')" class="tab-btn">رپورٹ</button>
-        </div>
+    <section class="filters">
+      <button class="chip active" data-filter="all">All</button>
+      <button class="chip" data-filter="today">Today</button>
+      <button class="chip" data-filter="month">This Month</button>
+      <button id="btn-pdf" class="chip pdf">PDF ⬇</button>
+    </section>
 
-        <!-- ==================== SECTION 1: MAIN DASHBOARD ==================== -->
-        <div id="section-main">
-            <div class="grid-cards">
-                <div class="card border-income">
-                    <p class="card-title">ٹوٹل آمدنی</p>
-                    <p class="card-value text-income">Rs <span id="totalIncome">0</span></p>
-                </div>
-                <div class="card border-expense">
-                    <p class="card-title">ٹوٹل خرچہ</p>
-                    <p class="card-value text-expense">Rs <span id="totalExpense">0</span></p>
-                </div>
-                <div class="card border-balance">
-                    <p class="card-title">باقی رقم (بیلنس)</p>
-                    <p class="card-value text-balance">Rs <span id="netBalance">0</span></p>
-                </div>
-                <div class="card border-savings">
-                    <p class="card-title">سیونگ گلاک 💰</p>
-                    <p class="card-value text-savings">Rs <span id="totalSavings">0</span></p>
-                </div>
-            </div>
+    <section id="members-bar" class="members-bar"></section>
 
-            <!-- Input Form -->
-            <div class="form-box">
-                <h3>آمدنی، خرچہ اور سیونگ درج کریں</h3>
-                <div class="form-group">
-                    <label>تاریخ:</label>
-                    <input type="date" id="mainDate" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>رقم (روپے):</label>
-                    <input type="number" id="mainAmount" placeholder="مثال: 500" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>کیٹیگری (صرف خرچے کے لیے):</label>
-                    <select id="mainCategory" class="form-control">
-                        <option value="راشن / گھر">🛒 راشن / گھر</option>
-                        <option value="پٹرول / بائیک">⛽ پٹرول / بائیک</option>
-                        <option value="چائے / ہوٹل">☕ چائے / ہوٹل</option>
-                        <option value="موبائل لوڈ">📱 موبائل لوڈ</option>
-                        <option value="دیگر اخراجات">💸 دیگر اخراجات</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>تفصیل / کام کا نام (اختیاری):</label>
-                    <input type="text" id="mainDetails" placeholder="مثال: دوست کو چائے پلائی" class="form-control">
-                </div>
-                <div class="btn-group">
-                    <button onclick="addMainEntry('income')" class="btn btn-green">➕ آمدنی</button>
-                    <button onclick="addMainEntry('expense')" class="btn btn-red">➖ خرچہ</button>
-                    <button onclick="addMainEntry('savings')" class="btn btn-orange">💰 سیونگ</button>
-                </div>
-            </div>
+    <section id="entries" class="entries"></section>
 
-            <!-- History -->
-            <div class="history-box">
-                <h3>آج کا لین دین کا ریکارڈ</h3>
-                <div id="mainHistoryList" class="list-container"></div>
-            </div>
-        </div>
+    <button id="btn-add" class="fab">＋</button>
+  </div>
 
-        <!-- ==================== SECTION 2: UDHAR DASHBOARD ==================== -->
-        <div id="section-udhar" class="hidden">
-            <div class="grid-cards">
-                <div class="card border-lena">
-                    <p class="card-title">کل ادھار لینا ہے</p>
-                    <p class="card-value text-lena">Rs <span id="totalUdharLena">0</span></p>
-                </div>
-                <div class="card border-dena">
-                    <p class="card-title">کل ادھار دینا ہے</p>
-                    <p class="card-value text-dena">Rs <span id="totalUdharDena">0</span></p>
-                </div>
-            </div>
+  <!-- ADD ENTRY MODAL -->
+  <div id="modal-add" class="modal hidden">
+    <div class="modal-card">
+      <h3>Add Entry</h3>
+      <div class="type-toggle">
+        <button id="type-expense" class="type-btn active">Expense</button>
+        <button id="type-income" class="type-btn">Income</button>
+      </div>
+      <label>Amount (Rs)</label>
+      <input id="inp-amount" type="number" inputmode="numeric" placeholder="0" />
+      <label>Category</label>
+      <select id="inp-category"></select>
+      <label>Note (optional)</label>
+      <input id="inp-note" type="text" maxlength="60" placeholder="e.g. Grocery from store" />
+      <div class="modal-actions">
+        <button id="btn-cancel" class="btn secondary">Cancel</button>
+        <button id="btn-save" class="btn primary">Save</button>
+      </div>
+    </div>
+  </div>
 
-            <div class="form-box">
-                <h3 style="color: #7c3aed;">نیا ادھار کھاتہ درج کریں</h3>
-                <div class="form-group">
-                    <label>بندے کا نام:</label>
-                    <input type="text" id="udharName" placeholder="مثال: علی بھائی" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>رقم (روپے):</label>
-                    <input type="number" id="udharAmount" placeholder="مثال: 1000" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>تفصیل / تفصیلات:</label>
-                    <input type="text" id="udharDetails" placeholder="مثال: بائیک کے لیے لیے" class="form-control">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                    <button onclick="addUdharEntry('lena')" class="btn btn-emerald">🟢 ادھار دیا (لینا ہے)</button>
-                    <button onclick="addUdharEntry('dena')" class="btn btn-rose">🔴 ادھار لیا (دینا ہے)</button>
-                </div>
-            </div>
+  <div id="toast" class="toast hidden"></div>
 
-            <div class="history-box">
-                <h3>باقی ادھار کھاتوں کی لسٹ</h3>
-                <div id="udharHistoryList" class="list-container"></div>
-            </div>
-        </div>
+  <script src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Arial,sans-serif}
+:root{--bg:#f2f5f9;--card:#fff;--text:#1c2530;--muted:#6b7684;--primary:#0f766e;--primary-soft:#d9efed;--green:#16a34a;--red:#dc2626;--border:#e3e8ef;--shadow:0 2px 10px rgba(0,0,0,.08)}
+html[data-theme=dark]{--bg:#0e141b;--card:#182029;--text:#e8edf3;--muted:#94a1b0;--primary:#2dd4bf;--primary-soft:#113c38;--green:#4ade80;--red:#f87171;--border:#263344;--shadow:0 3px 14px rgba(0,0,0,.5)}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.hidden{display:none!important}
+.screen{display:none}.screen.active{display:block}
+#screen-home{min-height:100vh;display:none;place-items:center;padding:20px}
+#screen-home.active{display:grid}
+.home-card{background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:28px 22px;width:100%;max-width:380px;text-align:center}
+.logo{font-size:44px}
+.home-card h1{margin:6px 0 2px;font-size:24px}
+.tagline{color:var(--muted);font-size:13px;margin-bottom:18px}
+.warning{background:#7c2d12;color:#ffd7c2;border-radius:10px;padding:8px;font-size:12px;margin-bottom:12px}
+label{display:block;text-align:left;font-size:12px;color:var(--muted);margin:10px 0 4px}
+input,select{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font-size:15px;outline:none}
+input:focus,select:focus{border-color:var(--primary)}
+.btn{width:100%;margin-top:12px;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--primary);color:#fff}
+html[data-theme=dark] .btn.primary{color:#06251f}
+.btn.secondary{background:var(--primary-soft);color:var(--primary)}
+.divider{display:flex;align-items:center;margin:16px 0 4px;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{padding:0 10px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.room-code{font-weight:700;font-size:17px;letter-spacing:1px}
+.room-sub{font-size:11px;color:var(--muted)}
+.top-actions button{background:none;border:none;font-size:18px;margin-left:6px;cursor:pointer}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px 16px 4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
+.card small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
+.card strong{font-size:14px}
+.card.income strong{color:var(--green)}
+.card.expense strong{color:var(--red)}
+.card.balance strong{color:var(--primary)}
+.filters{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap}
+.chip{border:1px solid var(--border);background:var(--card);color:var(--muted);border-radius:20px;padding:7px 14px;font-size:12px;cursor:pointer}
+.chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+html[data-theme=dark] .chip.active{color:#06251f}
+.chip.pdf{margin-left:auto;background:var(--primary-soft);color:var(--primary);border-color:transparent;font-weight:600}
+.members-bar{display:flex;gap:8px;overflow-x:auto;padding:0 16px 10px;white-space:nowrap}
+.member-chip{background:var(--primary-soft);color:var(--primary);font-size:11px;font-weight:600;border-radius:14px;padding:6px 10px;flex-shrink:0}
+.entries{padding:4px 16px 100px}
+.empty{text-align:center;color:var(--muted);padding:40px 0;font-size:13px}
+.entry{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:var(--shadow)}
+.e-left{display:flex;align-items:center;gap:10px;min-width:0}
+.e-sign{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;flex-shrink:0}
+.entry.in .e-sign{background:rgba(22,163,74,.15);color:var(--green)}
+.entry.out .e-sign{background:rgba(220,38,38,.12);color:var(--red)}
+.e-title{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.e-sub{font-size:11px;color:var(--muted)}
+.e-right{text-align:right;display:flex;align-items:center;gap:8px}
+.e-amt{font-size:13px;font-weight:700}
+.entry.in .e-amt{color:var(--green)}
+.entry.out .e-amt{color:var(--red)}
+.e-del{border:none;background:none;color:var(--muted);font-size:13px;cursor:pointer}
+.fab{position:fixed;right:18px;bottom:24px;width:58px;height:58px;border-radius:50%;border:none;background:var(--primary);color:#fff;font-size:26px;box-shadow:var(--shadow);cursor:pointer;z-index:6}
+html[data-theme=dark] .fab{color:#06251f}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;z-index:10;padding:18px}
+.modal-card{background:var(--card);border-radius:18px;padding:20px;width:100%;max-width:380px}
+.modal-card h3{margin-bottom:12px}
+.type-toggle{display:flex;gap:8px;margin-bottom:6px}
+.type-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--muted);font-weight:600;cursor:pointer}
+.type-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+html[data-theme=dark] .type-btn.active{color:#06251f}
+.modal-actions{display:flex;gap:10px}
+.modal-actions .btn{margin-top:14px}
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:20px;font-size:13px;z-index:20;box-shadow:var(--shadow)}
+/* =====================================================
+   Daily Budget- firebase.js
+   Paste your Firebase config below (guide is after the code)
+   ===================================================== */
 
-        <!-- ==================== SECTION 3: REPORT ==================== -->
-        <div id="section-report" class="hidden">
-            <div class="form-box" style="text-align: center;">
-                <h3 style="color: #1e3a8a;">مکمل ڈیٹا ری سیٹ</h3>
-                <p style="font-size: 12px; color: #6b7280; margin-bottom: 15px;">آپ کا ڈیٹا ہر انٹری کے ساتھ کلاؤڈ پر محفوظ ہو رہا ہے۔</p>
-                <button onclick="clearAllData()" class="btn btn-slate">⚠️ تمام ریکارڈز صاف کریں (Reset)</button>
-            </div>
-        </div>
+const firebaseConfig = {
+  apiKey: "PASTE_API_KEY",
+  authDomain: "PASTE_PROJECT.firebaseapp.com",
+  databaseURL: "https://PASTE_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "PASTE_PROJECT",
+  storageBucket: "PASTE_PROJECT.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId: "PASTE_APP_ID"
+};
 
-    </main>
+let db = null;
 
-    <!-- LOGIC CODES -->
-    <script>
-        document.getElementById('mainDate').value = new Date().toISOString().split('T')[0];
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+} catch (e) {
+  console.error("Firebase init failed:", e);
+}
 
-        let db = {
-            mainEntries: [],
-            udharEntries: [],
-            totalIncome: 0,
-            totalExpense: 0,
-            totalSavings: 0,
-            totalUdharLena: 0,
-            totalUdharDena: 0,
-            isDarkMode: false
-        };
+function isFirebaseReady() {
+  return !!(db && firebaseConfig.apiKey.indexOf("PASTE") === -1);
+}
+/* ========= SANJHA HISAB - app.js ========= */
+(function () {
+  "use strict";
 
-        function init() {
-            const savedData = localStorage.getItem('mySavingsCloudDB');
-            if(savedData) {
-                db = JSON.parse(savedData);
-                if(!db.udharEntries) db.udharEntries = [];
-                if(!db.totalUdharLena) db.totalUdharLena = 0;
-                if(!db.totalUdharDena) db.totalUdharDena = 0;
-            }
-            applyTheme();
-            updateDashboardDOM();
-            renderMainHistory();
-            renderUdharHistory();
+  /* ---------- helpers ---------- */
+  const $ = id => document.getElementById(id);
+  const store = {
+    get: k => localStorage.getItem(k),
+    set: (k, v) => localStorage.setItem(k, v),
+    del: k => localStorage.removeItem(k)
+  };
+  function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.remove('hidden');
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.add('hidden'), 2500);
+  }
+  function fmt(n) { return 'Rs ' + Number(n || 0).toLocaleString(); }
+  function fmtDate(ts) {
+    const d = new Date(ts);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+  function esc(s) {
+    return String(s || '').replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+  }
+
+  /* ---------- theme (auto from phone + manual toggle) ---------- */
+  function applyTheme() {
+    const saved = store.get('sh_theme');
+    const dark = saved ? saved === 'dark'
+      : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  }
+  $('btn-theme').onclick = () => {
+    const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    store.set('sh_theme', cur); applyTheme();
+  };
+
+  /* ---------- state ---------- */
+  let myName = '', roomCode = '', entries = {}, members = {}, filter = 'all', entryType = 'expense';
+  const CATS = {
+    expense: ['Food', 'Travel', 'Bills', 'Shopping', 'Health', 'Education', 'Other'],
+    income: ['Salary', 'Business', 'Gift', 'Rent', 'Other']
+  };
+  function fillCats() {
+    const sel = $('inp-category'); sel.innerHTML = '';
+    CATS[entryType].forEach(c => {
+      const o = document.createElement('option'); o.textContent = c; sel.appendChild(o);
+    });
+  }
+
+  /* ---------- create / join room ---------- */
+  $('btn-create').onclick = () => {
+    const name = $('inp-name').value.trim();
+    if (!name) return toast('Please enter your name');
+    if (!isFirebaseReady()) return toast('Firebase not connected yet');
+    myName = name; store.set('sh_name', name);
+    const code = String(Math.floor(10000 + Math.random() * 90000));
+    const uid = store.get('sh_uid') || String(Date.now()); store.set('sh_uid', uid);
+    const updates = {};
+    updates['rooms/' + code + '/info/createdAt'] = Date.now();
+    updates['rooms/' + code + '/members/' + uid] = { name: name, joinedAt: Date.now() };
+    db.ref().update(updates).then(() => {
+      store.set('sh_room', code);
+      enterRoom(code);
+      toast('Room created: ' + code);
+    }).catch(e => toast('Error: ' + e.message));
+  };
+
+  $('btn-join').onclick = () => {
+    const name = $('inp-name').value.trim();
+    const code = $('inp-code').value.trim();
+    if (!name) return toast('Please enter your name');
+    if (!/^\d{5}$/.test(code)) return toast('Code must be 5 digits');
+    if (!isFirebaseReady()) return toast('Firebase not connected yet');
+    myName = name; store.set('sh_name', name);
+    db.ref('rooms/' + code + '/info').once('value').then(s => {
+      if (!s.exists()) return toast('Room not found');
+      const uid = store.get('sh_uid') || String(Date.now()); store.set('sh_uid', uid);
+      return db.ref('rooms/' + code + '/members/' + uid).set({ name: name, joinedAt: Date.now() }).then(() => {
+        store.set('sh_room', code);
+        enterRoom(code);
+        toast('Joined room ' + code);
+      });
+    }).catch(e => toast('Error: ' + e.message));
+  };
+
+  /* ---------- live sync ---------- */
+  function enterRoom(code) {
+    roomCode = code;
+    $('screen-home').classList.remove('active');
+    $('screen-room').classList.add('active');
+    $('room-code').textContent = 'Room ' + code;
+    entries = {}; members = {};
+    db.ref('rooms/' + code + '/entries').on('child_added', s => { entries[s.key] = Object.assign({ key: s.key }, s.val()); render(); });
+    db.ref('rooms/' + code + '/entries').on('child_changed', s => { entries[s.key] = Object.assign({ key: s.key }, s.val()); render(); });
+    db.ref('rooms/' + code + '/entries').on('child_removed', s => { delete entries[s.key]; render(); });
+    db.ref('rooms/' + code + '/members').on('child_added', s => { members[s.key] = s.val().name; render(); });
+  }
+
+  $('btn-leave').onclick = () => { store.del('sh_room'); location.reload(); };
+
+  $('btn-share').onclick = () => {
+    const text = 'Join my Sanjha Hisab room! Code: ' + roomCode;
+    if (navigator.share) navigator.share({ text: text }).catch(() => {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Code copied'));
+    else toast('Room code: ' + roomCode);
+  };
+
+  /* ---------- filters ---------- */
+  document.querySelectorAll('.chip[data-filter]').forEach(ch => {
+    ch.onclick = () => {
+      document.querySelectorAll('.chip[data-filter]').forEach(c => c.classList.remove('active'));
+      ch.classList.add('active');
+      filter = ch.dataset.filter; render();
+    };
+  });
+
+  /* ---------- render ---------- */
+  function filteredEntries() {
+    const now = new Date();
+    const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    return Object.values(entries).filter(e => {
+      if (filter === 'today') return e.at >= startToday;
+      if (filter === 'month') return e.at >= startMonth;
+      return true;
+    }).sort((a, b) => b.at - a.at);
+  }
+
+  function render() {
+    const list = filteredEntries();
+    let inc = 0, exp = 0; const per = {};
+    list.forEach(e => {
+      if (e.type === 'income') inc += e.amount; else exp += e.amount;
+      per[e.by] = per[e.by] || { inc: 0, exp: 0 };
+      if (e.type === 'income') per[e.by].inc += e.amount; else per[e.by].exp += e.amount;
+    });
+    $('sum-income').textContent = fmt(inc);
+    $('sum-expense').textContent = fmt(exp);
+    $('sum-balance').textContent = fmt(inc - exp);
+
+    const bar = $('members-bar'); bar.innerHTML = '';
+    Object.keys(members).forEach(k => {
+      const n = members[k], p = per[n];
+      const div = document.createElement('div'); div.className = 'member-chip';
+      div.textContent = n + (p ? ' · +' + p.inc.toLocaleString() + ' / -' + p.exp.toLocaleString() : '');
+      bar.appendChild(div);
+    });
+
+    const box = $('entries'); box.innerHTML = '';
+    if (!list.length) { box.innerHTML = '<div class="empty">No entries yet. Tap + to add the first one.</div>'; return; }
+    list.forEach(e => {
+      const div = document.createElement('div');
+      div.className = 'entry ' + (e.type === 'income' ? 'in' : 'out');
+      div.innerHTML =
+        '<div class="e-left"><span class="e-sign">' + (e.type === 'income' ? '+' : '-') + '</span>' +
+        '<div><div class="e-title">' + esc(e.category) + (e.note ? ' - ' + esc(e.note) : '') + '</div>' +
+        '<div class="e-sub">' + esc(e.by) + ' · ' + fmtDate(e.at) + '</div></div></div>' +
+        '<div class="e-right"><span class="e-amt">' + fmt(e.amount) + '</span>' +
+        '<button class="e-del" data-k="' + e.key + '">x</button></div>';
+      box.appendChild(div);
+    });
+    box.querySelectorAll('.e-del').forEach(b => {
+      b.onclick = () => {
+        if (confirm('Delete this entry for everyone?')) {
+          db.ref('rooms/' + roomCode + '/entries/' + b.dataset.k).remove();
         }
+      };
+    });
+  }
 
-        function saveDB() {
-            localStorage.setItem('mySavingsCloudDB', JSON.stringify(db));
-            updateDashboardDOM();
-        }
+  /* ---------- add entry modal ---------- */
+  $('btn-add').onclick = () => { $('modal-add').classList.remove('hidden'); $('inp-amount').value = ''; $('inp-note').value = ''; fillCats(); };
+  $('btn-cancel').onclick = () => $('modal-add').classList.add('hidden');
+  $('type-expense').onclick = () => setType('expense');
+  $('type-income').onclick = () => setType('income');
+  function setType(t) {
+    entryType = t;
+    $('type-expense').classList.toggle('active', t === 'expense');
+    $('type-income').classList.toggle('active', t === 'income');
+    fillCats();
+  }
+  $('btn-save').onclick = () => {
+    const amount = parseFloat($('inp-amount').value);
+    if (!amount || amount <= 0) return toast('Enter a valid amount');
+    const data = {
+      type: entryType, amount: amount,
+      category: $('inp-category').value,
+      note: $('inp-note').value.trim(),
+      by: myName, at: Date.now()
+    };
+    db.ref('rooms/' + roomCode + '/entries').push(data)
+      .then(() => { $('modal-add').classList.add('hidden'); toast('Saved for everyone'); })
+      .catch(e => toast('Error: ' + e.message));
+  };
 
-        function switchTab(tabName) {
-            document.getElementById('section-main').classList.add('hidden');
-            document.getElementById('section-udhar').classList.add('hidden');
-            document.getElementById('section-report').classList.add('hidden');
-            
-            document.getElementById('tab-main').classList.remove('active');
-            document.getElementById('tab-udhar').classList.remove('active');
-            document.getElementById('tab-report').classList.remove('active');
+  /* ---------- PDF statement ---------- */
+  $('btn-pdf').onclick = () => {
+    const list = filteredEntries().slice().sort((a, b) => a.at - b.at);
+    if (!list.length) return toast('Nothing to export');
+    const doc = new window.jspdf.jsPDF();
+    let inc = 0, exp = 0;
+    list.forEach(e => e.type === 'income' ? inc += e.amount : exp += e.amount);
+    doc.setFontSize(18); doc.setTextColor(15, 118, 110);
+    doc.text('Sanjha Hisab - Statement', 14, 18);
+    doc.setFontSize(10); doc.setTextColor(90);
+    doc.text('Room code: ' + roomCode, 14, 26);
+    doc.text('Period: ' + ({ all: 'All time', today: 'Today', month: 'This month' }[filter]), 14, 31);
+    doc.text('Generated: ' + fmtDate(Date.now()) + ' by ' + myName, 14, 36);
+    doc.text('Income: Rs ' + inc.toLocaleString() + '  |  Expense: Rs ' + exp.toLocaleString() + '  |  Balance: Rs ' + (inc - exp).toLocaleString(), 14, 43);
+    doc.autoTable({
+      startY: 48,
+      head: [['Date', 'Type', 'Category', 'Note', 'By', 'Amount']],
+      body: list.map(e => [fmtDate(e.at), e.type === 'income' ? 'IN' : 'OUT', e.category, e.note || '-', e.by, 'Rs ' + e.amount.toLocaleString()]),
+      headStyles: { fillColor: [15, 118, 110] },
+      styles: { fontSize: 8 }
+    });
+    doc.save('SanjhaHisab-' + roomCode + '-statement.pdf');
+    toast('PDF downloaded');
+  };
 
-            if(tabName === 'main') {
-                document.getElementById('section-main').classList.remove('hidden');
-                document.getElementById('tab-main').classList.add('active');
-            } else if(tabName === 'udhar') {
-                document.getElementById('section-udhar').classList.remove('hidden');
-                document.getElementById('tab-udhar').classList.add('active');
-            } else if(tabName === 'report') {
-                document.getElementById('section-report').classList.remove('hidden');
-                document.getElementById('tab-report').classList.add('active');
-            }
-        }
-
-        function updateDashboardDOM() {
-            let balance = db.totalIncome - db.totalExpense - db.totalSavings;
-            document.getElementById('totalIncome').innerText = db.totalIncome;
-            document.getElementById('totalExpense').innerText = db.totalExpense;
-            document.getElementById('totalSavings').innerText = db.totalSavings;
-            document.getElementById('netBalance').innerText = balance;
-            document.getElementById('totalUdharLena').innerText = db.totalUdharLena;
-            document.getElementById('totalUdharDena').innerText = db.totalUdharDena;
-        }
-
-        function addMainEntry(type) {
-            const amt = parseFloat(document.getElementById('mainAmount').value);
-            const date = document.getElementById('mainDate').value;
-            const cat = document.getElementById('mainCategory').value;
-            const details = document.getElementById('mainDetails').value.trim();
-
-            if(!amt || amt <= 0) {
-                alert("درست رقم لکھیں!");
-                return;
-            }
-
-            const newEntry = {
-                id: Date.now(),
-                type: type,
-                amount: amt,
-                date: date,
-                category: type === 'expense' ? cat : (type === 'income' ? '💰 آمدنی' : '🐷 سیونگ'),
-                details: details || 'کوئی تفصیل نہیں'
-            };
-
-            db.mainEntries.unshift(newEntry);
-            if(type === 'income') db.totalIncome += amt;
-            if(type === 'expense') db.totalExpense += amt;
-            if(type === 'savings') db.totalSavings += amt;
-
-            saveDB();
-            renderMainHistory();
-            document.getElementById('mainAmount').value = '';
-            document.getElementById('mainDetails').value = '';
-        }
-
-        function deleteMainEntry(id, type, amount) {
-            db.mainEntries = db.mainEntries.filter(item => item.id !== id);
-            if(type === 'income') db.totalIncome -= amount;
-            if(type === 'expense') db.totalExpense -= amount;
-            if(type === 'savings') db.totalSavings -= amount;
-            saveDB();
-            renderMainHistory();
-        }
-
-        function renderMainHistory() {
-            const listContainer = document.getElementById('mainHistoryList');
-            listContainer.innerHTML = '';
-            if(db.mainEntries.length === 0) {
-                listContainer.innerHTML = `<p style="text-align:center;font-size:11px;color:#9ca3af;padding:10px;">کوئی ریکارڈ نہیں ہے۔</p>`;
-                return;
-            }
-            db.mainEntries.forEach(item => {
-                let borderStyle = 'border-right: 4px solid #16a34a; background:#f0fdf4; color:#16a34a;';
-                let sign = '➕';
-                if(item.type === 'expense') { borderStyle = 'border-right: 4px solid #dc2626; background:#fef2f2; color:#dc2626;'; sign = '➖'; }
-                if(item.type === 'savings') { borderStyle = 'border-right: 4px solid #f97316; background:#fff7ed; color:#f97316;'; sign = '🐷'; }
-
-                listContainer.innerHTML += `
-                    <div class="list-item" style="${borderStyle}">
-                        <div class="list-item-left">
-                            <p style="color:#1f2937;">${item.details} (${item.category})</p>
-                            <span>${item.date}</span>
-                        </div>
-                        <div class="list-item-right">
-                            <span
+  /* ---------- init ---------- */
+  applyTheme();
+  fillCats();
+  $('inp-name').value = store.get('sh_name') || '';
+  if (!isFirebaseReady()) $('firebase-warning').classList.remove('hidden');
+  const savedRoom = store.get('sh_room');
+  if (savedRoom && isFirebaseReady()) {
+    myName = store.get('sh_name') || 'Member';
+    enterRoom(savedRoom);
+  }
+})();
