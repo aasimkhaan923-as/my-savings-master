@@ -169,3 +169,30 @@ html[data-theme=dark] .type-btn.active{color:#06251f}
 
 
 
+/* ========= HISAB KITAAB - firebase.js ========= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBHpBbHUqTR-q1MdxJEzguJIkuixkxVLBI",
+  authDomain: "hisaabkitaab-13d52.firebaseapp.com",
+  databaseURL: "https://hisaabkitaab-13d52-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hisaabkitaab-13d52",
+  storageBucket: "hisaabkitaab-13d52.firebasestorage.app",
+  messagingSenderId: "194563862363",
+  appId: "1:194563862363:web:536f2deae7dda9358cf47e",
+  measurementId: "G-Y07XTW1ZH2"
+};
+
+let db = null;
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+} catch (e) {
+  console.error("Firebase init failed:", e);
+}
+
+function isFirebaseReady() {
+  return !!db;
+}
+
+
+
